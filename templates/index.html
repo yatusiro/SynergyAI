@@ -1,0 +1,613 @@
+<!DOCTYPE>
+
+<html>
+
+<head>
+    <title>Data Stream Modeler</title>
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise,fetch"></script>
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script><!--graph-->
+    <script src="static/cytoscape-automove.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
+    <!-- for testing with local version of cytoscape.js -->
+    <!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+
+    <script src="https://www.lactame.com/lib/ml/6.0.0/ml.min.js"></script>
+
+    <script src="static/cytoscape-cxtmenu.js"></script>
+
+    <!--ourJavaScript-->
+    <script src="static/js/AI_Programming.js"></script>
+
+    <script src="static/test_flask.js"></script>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+
+    <style>
+        body {
+            font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .header {
+            padding: 5px;
+            width: 100%;
+            text-align: center;
+            background: #1abc9c;
+            color: white;
+            font-size: 30px;
+        }
+
+        .toolbar {
+            width: 100%;
+            padding: 3px;
+            /*text-align: center;*/
+            /*background: #fff;*/
+            border-color: #000;
+            border-width: 3px;
+            color: white;
+            font-size: 30px;
+            z-index: 1;
+            background-image: linear-gradient(to bottom, white, gray);
+        }
+
+        .h-button {
+            height: 4%;
+            margin: 5px;
+        }
+
+        .h-button:hover {
+            height: 4.5%
+        }
+
+        .hx-button {
+            /*width: 60%;*/
+            width: 70%;
+            margin: 15px;
+        }
+
+        .hx-button:hover {
+            width: 60.5%;
+        }
+
+        #draggable {
+            width: 150px;
+            height: 150px;
+            padding: 0.5em;
+            outline-color: #000;
+        }
+
+        h1 {
+            opacity: 0.5;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        /* Pattern styles */
+        .container {
+            display: table;
+            width: 80%;
+        }
+
+        .left-half {
+            background-color: #ff9e2c;
+            position: absolute;
+            left: 0px;
+            /*width: 8%;*/
+            width: 5%;
+            height: 100%;
+            background-image: linear-gradient(to right, white, grey);
+        }
+
+        .right-half {
+            /* background-color: #b6701e; */
+            position: absolute;
+            right: 0px;
+            width: 94%;
+            height: 100%;
+        }
+
+        #cy {
+            /*position: absolute;*/
+            left: 0;
+            top: 1%;
+            bottom: 0;
+            right: 0;
+            z-index: 999;
+            /*background: #fafbff;*/
+            background: #b0d4ef;
+            height: 90%;
+            width: 50%;
+            float: left;
+            border-right: solid black 3px;
+        }
+
+        #cy2 {
+            /*position: absolute;*/
+            left: 0;
+            top: 1%;
+            bottom: 0;
+            right: 0;
+            z-index: 999;
+            background: #fafbff;
+            /*background: #1abc9c;*/
+            height: 90%;
+            width: 49%;
+            float: left;
+        }
+
+    </style>
+
+    <style>
+        .black_overlay{
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: #c8c8c8;
+            z-index:1001;
+            -moz-opacity: 0.8;
+            opacity:.80;
+            filter: alpha(opacity=78);
+        }
+        .pop_win {
+            display: none;
+            position: absolute;
+            top: 10%;
+            left: 23%;
+            width: 20%;
+            height: 30%;
+            padding: 10px;
+            border: 2px solid rebeccapurple;
+            background-color: white;
+            z-index:9999;
+            overflow: auto;
+        }
+        .predictpage {
+            display: none;
+            position: absolute;
+            top: 10%;
+            left: 23%;
+            width: 20%;
+            height: 30%;
+            padding: 10px;
+            border: 2px solid rebeccapurple;
+            background-color: white;
+            z-index:9999;
+            overflow: auto;
+        }
+
+        .class_hints {
+            display: none;
+            position: absolute;
+            top: 10%;
+            left: 23%;
+            width: 50%;
+            height: 90%;
+            padding: 10px;
+            border: 2px solid rgb(35, 16, 212);
+            background-color: white;
+            z-index:9999;
+            overflow: auto;
+        }
+
+        .acc1 {
+            display: block;
+            position: absolute;
+            top: 8%;
+            left: 6%;
+            width: 7%;
+            height: 5%;
+            padding: 10px;
+            border: 2px solid rgb(0, 0, 1);
+            background-color: white;
+            z-index:9999;
+            overflow: auto;
+        }
+
+        .acc2 {
+            display: block;
+            position: absolute;
+            top: 8%;
+            left: 54%;
+            width: 7%;
+            height: 5%;
+            padding: 10px;
+            border: 2px solid rebeccapurple;
+            background-color: white;
+            z-index:9999;
+            overflow: auto;
+        }
+
+        .acclist {
+            display: block;
+            position: absolute;
+            top: 8%;
+            left: 8%;
+            width: 60%;
+            height: 50%;
+            padding: 10px;
+            border: 2px solid rebeccapurple;
+            background-color: white;
+            z-index:9999;
+            overflow: auto;
+        }
+    </style>
+
+<!--    <script type="text/javascript">-->
+<!--        $(function () {-->
+<!--            $(".changeAttributes").onclick(function () {-->
+<!--                console.log($(this).innerText);-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
+</head>
+
+<body>
+<!--<div class="header">
+<h1>IoT Data Stream Program Editor v.1.0.5</h1>
+</div>-->
+<div class="toolbar">
+    <!-- <input id="KK" value=444> -->
+    <!-- <button onclick="server.increment()">increment</button> -->
+    <!-- <button onclick="testfunction()">increment</button> -->
+
+<!--    eel.js-->
+<!--    <script type="text/javascript" src="/eel.js"></script>-->
+<!--    <script type="text/javascript">-->
+<!--        function testfunction(){-->
+<!--          eel.your_function(1,5);-->
+<!--          eel.expose(system_sends_massage2)-->
+<!--         -->
+<!--        }-->
+<!--        -->
+<!--        function system_sends_massage2(a){-->
+<!--           document.getElementById("KK").value=a;-->
+<!--        }-->
+<!--  -->
+<!--      </script>-->
+
+    <input type="file" id="btn-open" onchange="openFile()" name="file" hidden/>
+    <!--key thing is get directory path-->
+
+    <label for="btn-open">
+        <img src="static/img/btn-open.png" class="h-button"/>
+        <!--				<img src="static/img/btn-open.png" onclick="openFile()" class="h-button" />-->
+    </label>
+
+    <img id="btn-save" src="static/img/btn-save.png" onclick="saveFile()" class="h-button"/>
+    <img src="static/img/btn-backward.png" onclick="backwardPlay()" class="h-button"/>
+    <img src="static/img/btn-play.png" onclick="test4()" class="h-button"/>
+    <!-- <img src="static/img/btn-play.png" onclick="Play()" class="h-button"/> -->
+    <img src="static/img/btn-forward.png" onclick="forwardPlay()" class="h-button"/>
+    <img id="btn-delete" src="static/img/btn-delete.png" onclick="deleteElement()" class="h-button"/>
+    <!-- <input id="csv_file" type="file"> -->
+    <input type="file" id="csv_file" name="file" onchange="readCsvFile()" hidden/>
+    <!--key thing is get directory path-->
+
+    <label for="csv_file">
+        <img src="static/img/csv.png" class="h-button"/>
+        <!--				<img src="static/img/btn-open.png" onclick="openFile()" class="h-button" />-->
+    </label>
+    <!--<button onclick="showsting()" >Change</button>-->
+<!--     <input type="file" id= onchange="openFile()" name="file" hidden/> -->
+    <!--<img src="static/img/btn-and.png" onclick="setAND()" class="h-button"/>
+    <img src="static/img/btn-or.png" onclick="setOR()" class="h-button"/>
+    <img src="static/img/btn-switch.png" onclick="setSWITCH()" class="h-button"/>-->
+    <!--<img src="static/img/dev-hub.png" onclick="setHUB()" class="h-button" />
+<img src="static/img/dev-temp.png" onclick="setTEMP()" class="h-button" />
+<img src="static/img/dev-hum.png" onclick="setHUM()" class="h-button" />-->
+
+    <img src="static/img/icon_test.png" onclick="test_flask()" class="h-button"/>
+    <img src="static/img/icon_hints.png" onclick="popHints()" class="h-button"/>
+    <img src="static/img/icon_AI.png" onclick="AI_programming()" class="h-button"/>
+    <img src="static/img/yajirusi.png" onclick="AI_programming2()" class="h-button"/>
+    <!-- <img src="static/img/yajirusi.png" onclick="test4()" class="h-button"/> -->
+    <!-- <img src="static/img/yajirusi.png" onclick="testflask()" class="h-button"/>
+    <img src="static/img/yajirusi.png" onclick="testincomer()" class="h-button"/>
+    <img src="static/img/yajirusi.png" onclick="testoutgoers()" class="h-button"/> -->
+   
+</div>
+
+<section class="container">
+    <div class="left-half">
+
+<!--        <img src="static/img/btnx-and.png" onclick="setAND()" class="hx-button"/>-->
+<!--        <img src="static/img/btnx-or.png" onclick="setOR()" class="hx-button"/>-->
+<!--        <img src="static/img/btnx-switch.png" onclick="setSWITCH()" class="hx-button"/>-->
+        <img src="static/img/input_v1.png" onclick="setInput()" class="hx-button"/>
+        <img src="static/img/output_v1.png" onclick="setOutput()" class="hx-button"/>
+
+        <img src="static/img/GLM.png" onclick="setGLM()" class="hx-button"/>
+        <img src="static/img/DL.png" onclick="setDL()" class="hx-button"/>
+        <img src="static/img/RF.png" onclick="setRF()" class="hx-button"/>
+        <img src="static/img/DT.png" onclick="setDT()" class="hx-button"/>
+        <img src="static/img/GBT.png" onclick="setGBT()" class="hx-button"/>
+        <img src="static/img/SVM.png" onclick="setSVM()" class="hx-button"/>
+        </br>
+<!--        <img src="static/img/btnx-temp.png" onclick="setTEMP()" class="hx-button"/>-->
+<!--        <img src="static/img/btnx-hum.png" onclick="setHUM()" class="hx-button"/>-->
+<!--        <img src="static/img/btnx-cooler.png" onclick="setCOOLER()" class="hx-button"/>-->
+<!--        <img id="btnx-edge" src="static/img/btnx-edge.png" onclick="setHUB()" class="hx-button"/>-->
+    </div>
+    <div class="right-half">
+<!--        <div id="cy" style="height:80%;"></div>-->
+        <div id="cy"></div>
+        <div id="cy2"></div>
+    </div>
+</section>
+
+<!--<div class="footer">
+<h4>IoT Data Stream Program Editor v.1.0.5</h4>
+
+</div>-->
+
+
+
+<!--<p>网页：单击按钮弹出悬浮窗+页面遮罩</p>-->
+<!--<a href = "javascript:void(0)" onclick = "popWin();">请点这里</a>-->
+<div id="light" class="pop_win">
+    <a href = "javascript:void(0)" onclick = "closeWin();" style="float: right;">[x]</a>
+
+<!--    <div id="nodeName" value="">ttttt</div>-->
+    <h2 id="nodeName"></h2>
+    <h2 id="selected_data">Null</h2>
+    <form name="mycsv">
+        <select name="selectcsv">
+
+        </select>
+    </form>
+    <button onclick="changeDataInNode()" >Change</button>
+<!--    <form id="changeAttributes">-->
+<!--        First name: <input type="text" name="FirstName" value="Mickey"><br>-->
+<!--        Last name: <input type="text" name="LastName" value="Mouse"><br>-->
+<!--        <input type="submit" value="提交">-->
+<!--    </form>-->
+
+<!--    target<input id="swTarget" type="text" value="">
+
+    if (<input id="node1" type="text" value="" style="width: 50px;">
+    <input id="symbol" type="text" value="" style="width: 25px;">
+    <input id="node2" type="text" value="" style="width: 50px;">)<br>
+
+    {<br>
+    <input id="target1" type="text" value="" style="width: 50px;"><br>
+    }<br>
+
+    else<br>
+    {<br>
+    <input id="target2" type="text" value="" style="width: 50px;"><br>
+    }
+
+    <button type="button" onclick="closeWin();">submit</button>-->
+</div>
+
+<div id="fade" class="black_overlay"></div>
+
+<!--hints page-->
+<div id="id_hints" class="class_hints">
+    <a href = "javascript:void(0)" onclick = "closeHints();" style="float: right;">[x]</a>
+
+
+    <h2 id="nodeName_hints">Hints: </br>Correlation Matrix</h2>
+    <h3>correlation coefficient > 0.4</h3>
+
+    <h2>Data Group by AI</h2>
+    <div>相関係数を分析することで</div>
+    <div>a35の予測にa25,a45,a41を使用すると精度が向上する可能性があります</div>
+    <div>a25の予測にa18,a35を使用すると精度が向上する可能性があります</div>
+    
+    <table border="1" class="dataframe">
+        <thead>
+          <tr style="text-align: right;">
+            <th></th>
+            <th>a18</th>
+            <th>a25</th>
+            <th>a35</th>
+            <th>a45</th>
+            <th>a41</th>
+            <th>a9</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>a18</th>
+            <td>1.000000</td>
+            <td>0.994162</td>
+            <td>0.629290</td>
+            <td>0.182998</td>
+            <td>0.028706</td>
+            <td>-0.002446</td>
+          </tr>
+          <tr>
+            <th>a25</th>
+            <td>0.994162</td>
+            <td>1.000000</td>
+            <td>0.629139</td>
+            <td>0.184324</td>
+            <td>0.029389</td>
+            <td>-0.001513</td>
+          </tr>
+          <tr>
+            <th>a35</th>
+            <td>0.629290</td>
+            <td>0.629139</td>
+            <td>1.000000</td>
+            <td>0.538920</td>
+            <td>0.426906</td>
+            <td>0.190740</td>
+          </tr>
+          <tr>
+            <th>a45</th>
+            <td>0.182998</td>
+            <td>0.184324</td>
+            <td>0.538920</td>
+            <td>1.000000</td>
+            <td>0.683408</td>
+            <td>-0.126298</td>
+          </tr>
+          <tr>
+            <th>a41</th>
+            <td>0.028706</td>
+            <td>0.029389</td>
+            <td>0.426906</td>
+            <td>0.683408</td>
+            <td>1.000000</td>
+            <td>-0.002745</td>
+          </tr>
+          <tr>
+            <th>a9</th>
+            <td>-0.002446</td>
+            <td>-0.001513</td>
+            <td>0.190740</td>
+            <td>-0.126298</td>
+            <td>-0.002745</td>
+            <td>1.000000</td>
+          </tr>
+        </tbody>
+      </table>
+      <img src="static/img/Figure_3.png" width="480px" height="360px">
+      <h3>Do you want to change the program-net by AI?</h3>
+    <input type="button" onclick="AI_programming()" name="" value="Yes" class="hx-button" />
+    
+</div>
+
+<div id="fade_hints" class="black_overlay"></div>
+
+<div id="humanAccuracy" class="acc1">
+    Accuracy: <input type="text" id="haccuracy" value="" name="lname" size="5" disabled><br>
+</div>
+
+<div id="AIAccuracy" class="acc2">
+    Accuracy: <input type="text" id="aaccuracy" value="" name="lname" size="5" disabled><br>
+</div>
+
+<div id="predict" class="predictpage">
+    <a href = "javascript:void(0)" onclick = "closepredict();" style="float: right;">[x]</a>
+    <h3>Use:</h3>
+    <span id="mytraining">Null</span>
+    <h3>To predict:</h3>
+    <span id="mypredict">Null</span>
+    <h3></h3>         
+    <input type="button" onclick="testflask3()" name="" value="Yes" class="hx-button"/>
+</div>
+
+<!-- <div id="AccuracyList" class="acclist" name="mylist">
+    <style>
+        table {
+            border-collapse: 0px;
+            border-spacing: 0px;
+            width: 300px;
+            height: auto;
+            text-align: center;
+            border: 0.5px solid black
+        }
+        
+        thead {
+            font-weight: bold;
+            background-color: grey;
+        }
+        
+        td {
+            border: 0.5px solid black;
+        }
+    </style>
+    
+        <table name="mytable">
+            <thead>
+                <td>姓名</td>
+                <td>科目</td>
+                <td>成绩</td>
+                <td>操作</td>
+            </thead>
+            <tbody>
+ 
+            </tbody>
+            <div class="foot2" onclick="removeall()"><button>close</button></div>
+        </table>
+        <script>
+            //通过对象存储信息,数组里面可以存放多个数据，一个数据就是一个对象
+            var datas = [{
+                    name: '卫英络',
+                    subject: 'javascript',
+                    score: 100
+                }, {
+                    name: '宏利',
+                    subject: 'javascript',
+                    score: 98
+                }, {
+                    name: '富恒',
+                    subject: 'javascript',
+                    score: 60
+                }, {
+                    name: '明宇',
+                    subject: 'javascript',
+                    score: 78
+                }, {
+                    name: 'yy',
+                    subject: 'javascript',
+                    score: 10
+                }]
+                //需要把数据放在tbody里面
+                //先有行,有几个人就创建几行，通过数组长度得到
+            var tbody = document.mylist.querySelector('tbody')
+            for (var i = 0; i < datas.length; i++) { //外面的for循环管理行
+                //创建行
+                var tr = document.mylist.createElement('tr')
+                console.log("test1")
+                    //添加行
+                tbody.appendChild(tr) //里面没有内容
+                    //往每个行里面创建单元格，所以单元格应该写在循环里面，单元格个数取决于对象属性的数目  通过for循环遍历对象(数组中的每一个对象）（for in)  里面的for循环管理列
+                for (var k in datas[i]) { //用来创建单元格的个数  与数据有关
+                    //创建单元格 每循环一次创建一个td并且放在行里面
+                    var td = document.mylist.createElement('td')
+                    tr.appendChild(td)
+                        //把对象里面的属性值给td
+                    td.innerHTML = datas[i][k] //神奇
+                }
+ 
+ 
+                //添加删除单元格  神奇
+                var td = document.mylist.createElement('td')
+                tr.appendChild(td) //是再tr这个父元素，作为子元素放入tr里面去
+                    //添加单元格里面的删除内容
+                td.innerHTML = "<a href='#'>删除</a>"
+ 
+            }
+            //添加事件，点击删除的时候，就会删除改行，应该写在整个for循环的下面，因为要等到表格创建完
+            //获取所有的a
+            var a = document.mylist.querySelectorAll('a')
+                //循环依次添加注册事件
+            for (var i = 0; i < a.length; i++) {
+                a[i].onclick = function() {
+                    //node.removeChild(child)
+                    //链接所在的行chlid，a的父亲是td，td的父亲是tr，node行的父亲为tbody
+                    tbody.removeChild(this.parentNode.parentNode)
+                }
+            }
+
+            function removeall(){
+                var a = document.mylist.querySelectorAll('a')
+                //循环依次添加注册事件
+                for (var i = 0; i < a.length; i++) {
+                        //node.removeChild(child)
+                        //链接所在的行chlid，a的父亲是td，td的父亲是tr，node行的父亲为tbody
+                        tbody.removeChild(a[i].parentNode.parentNode)
+                    }
+                
+
+                }
+        </script>
+    
+ 
+</div> -->
+<!--<script src="static/js/scripts.js"></script>-->
+</body>
+
+<script src="static/datastream.js"></script>
+</html>
