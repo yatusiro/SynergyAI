@@ -1167,7 +1167,7 @@ function cyInitialize(jsonUrl, cyId) {
                 var capsID = 'zr' + Math.round(Math.random() * 2000);/*caption or random id for module*/
                 var orID = 's-' + Math.round(Math.random() * 2000);/*random id for single node*/
                 var edgeID = 'e' + Math.round(Math.random() * 2000);/*not used now*/
-
+                var dataID = 'no data'+orID
                 /*add the element into the canvas*/
                 cy.add({
                     classes: 'automove-viewport',
@@ -1189,6 +1189,27 @@ function cyInitialize(jsonUrl, cyId) {
                         y: evt.position.y
                     }
                 });
+
+                // cy.add({
+                //     classes: 'automove-viewport',
+                //     data: {id: dataID, parent: capsID, label: 'data(id)', type: '' + nodeDrawType,},
+                //     classes: 'input-Operator',
+                //     position: {
+                //         x: evt.position.x,
+                //         y: evt.position.y
+                //     }
+                // });
+
+                // cy.add({
+                //     classes: 'automove-viewport',
+                //     data: {id: dataID, type: 'CAPSULE'},
+
+                //     classes: 'capsule',
+                //     position: {
+                //         x: evt.position.x,
+                //         y: evt.position.y
+                //     }
+                // });
 
             }
             else if(nodeDrawType == outputData){
@@ -1660,6 +1681,14 @@ function cyInitialize(jsonUrl, cyId) {
                             //console.log(list[a]._private.data.id);
                             console.log(cy.$("#"+list[a]._private.data.id).data().csv_lier)
                             text =text + cy.$("#"+list[a]._private.data.id).data().csv_lier+','
+                        }
+                        if(list[a]._private.data.id.indexOf('AI')){}
+                        else{
+                            try{
+                            //console.log(list[a]._private.data.id);
+                            console.log(cy.$("#"+list[a]._private.data.id).data().csv_lier)
+                            text =text + cy.$("#"+list[a]._private.data.id).data().csv_lier+','
+                        }catch{}
                         }
                     }
                     console.log(text);
@@ -2482,7 +2511,8 @@ function closepredict() {
 }
 
 function AI_programming(){
-    let jsonUrl = 'static/data/data_after.json';
+    // let jsonUrl = 'static/data/a2.json';
+    let jsonUrl = 'static/data/sample2.json';
     // jsonUrl = 'static/data/data_3.json';
     // jsonUrl = 'static/data/data (17).json';
     // jsonUrl = 'static/data/data_improvement2.json';
@@ -2607,6 +2637,14 @@ function predictobj(){
                 trainingdata=trainingdata+cy.$("#"+list[a]._private.data.id).data().csv_data+'#';
 
             }
+            if(list[a]._private.data.id.indexOf('AI')){}
+            else{
+                //console.log(list[a]._private.data.id);
+                console.log(cy.$("#"+list[a]._private.data.id).data().csv_lier);
+                training=training+cy.$("#"+list[a]._private.data.id).data().csv_lier+',';
+                trainingdata=trainingdata+cy.$("#"+list[a]._private.data.id).data().csv_data+'#';
+
+            }
         }
         finaltraining=training+"@%&"+trainingdata;
         finaldata=finaltraining+'@TGT:targetis@'+finaltarget;
@@ -2638,6 +2676,15 @@ function predictnode(ele){
             console.log(cy.$("#"+list[a]._private.data.id).data().csv_lier);
             training=training+cy.$("#"+list[a]._private.data.id).data().csv_lier+',';
             trainingdata=trainingdata+cy.$("#"+list[a]._private.data.id).data().csv_data+'#';
+        }
+        if(list[a]._private.data.id.indexOf('AI')){}
+        else{
+            try{
+            //console.log(list[a]._private.data.id);
+            console.log(cy.$("#"+list[a]._private.data.id).data().csv_lier);
+            training=training+cy.$("#"+list[a]._private.data.id).data().csv_lier+',';
+            trainingdata=trainingdata+cy.$("#"+list[a]._private.data.id).data().csv_data+'#';
+            }catch{}
         }
     }
     finaltraining=training+"@%&"+trainingdata;

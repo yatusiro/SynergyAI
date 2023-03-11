@@ -149,6 +149,7 @@ function test4(){
                     tgt = response[0];
                     document.getElementById('haccuracy').value=acc.slice(0,6)
                     document.getElementById('aaccuracy').value=acc.slice(0,6)
+                    confirm('Target:'+tgt+' Used:'+response[2]+' Accuracy:'+acc.slice(0,6))
                     // console.log('Accuracy:'+acc.slice(0,6))
                 }
         })
