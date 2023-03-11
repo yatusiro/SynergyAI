@@ -3,6 +3,7 @@ import seaborn as sns
 import numpy as np    
 import matplotlib.pyplot as plt 
 import json
+import os
 # collect data
 data = {
     'x': [45, 37, 42, 35, 39],
@@ -50,6 +51,17 @@ def qw(str):
     print("Dataframe is : ")
     matrix = dataframe.corr()
     st = matrix.to_json()
+    #HTML
+    rt = matrix.to_html()
+    print(type(rt))
+    print(rt)
+    html = matrix.to_html()
+    print(html)
+    file=open('temphtml2.html','w')
+    file.write(rt)
+    file.close()
+    os.system('temphtml2.html')
+    #HTML
     print("Correlation matrix is : ")
     heatmap_plot=sns.heatmap(matrix,center=0,cmap='YlGnBu')   
     plt.show()
